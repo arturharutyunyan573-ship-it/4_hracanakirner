@@ -14,7 +14,7 @@ const app = express();
 
 const hendler1 = (req, res, next) => {
     console.log('hendler1');
-    req.customData = 'This is a custom data from hendleer 1';
+    req.customData = 'This is a custom data from hendler 1';
     next();
 };
 
@@ -23,7 +23,7 @@ const handler2 = (req, res) => {
     res.send(`handler2 received: ${req.customData}`);
 };
 
-app.get("/", handler2, hendler1);
+app.get("/",  hendler1, handler2);
 
 app.listen(PORT, () => {
     console.log(`app listning on port ${PORT}`);
