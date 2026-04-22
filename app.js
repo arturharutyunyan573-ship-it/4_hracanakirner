@@ -1,17 +1,14 @@
-import http from 'http';
+import 'dotenv/config';
+import express from 'express';
 
-const { PORT } = process.env;
+const app = express();
 
+app.get('/', (req, res) => {
+    res.json({
+        message: 'Hello World!',
+    });
+})
 
-const server = http.createServer((req, res) => {
-    const parsed = url.parse(req.url, true);
-    const pathname = parsed.pathname;
-    const query = parsed.query;
-
-    res.setHeader('Content-Type', 'application/json');
-
-});
-
-server.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+app.listen(PORT, () => {
+    console.log(`app listning on port ${PORT}`);
 });

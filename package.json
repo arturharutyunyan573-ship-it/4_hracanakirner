@@ -6,12 +6,14 @@
   "repository": "https://github.com/arturharutyunyan573-ship-it/4_hracanakirner.git",
   "author": "cheater314",
   "license": "MIT",
+  "type": "module",
   "private": true,
   "scripts": {
-    "start": "node app.js"
+    "dev": "nodemon -r dotenv/config app.js dotenv_config_path=./.env"
   },
   "devDependencies": {
-    "nodemon": "^3.1.14"
+    "nodemon": "^3.1.14",
+    "express": "^5.2.1"
   },
   "dependencies": {
     "dotenv": "^17.4.2"
