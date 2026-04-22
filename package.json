@@ -1,0 +1,19 @@
+{
+  "name": "express-app",
+  "version": "1.0.0",
+  "description": "Testing express and etc logic",
+  "main": "app.js",
+  "repository": "https://github.com/arturharutyunyan573-ship-it/4_hracanakirner.git",
+  "author": "cheater314",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start": "node app.js"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2"
+  }
+}
