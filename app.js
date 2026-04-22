@@ -14,3 +14,10 @@ app.get('/', (req, res) => {
 app.listen(PORT, () => {
     console.log(`app listning on port ${PORT}`);
 });
+
+const handler2 = (req, res) => {
+    console.log('handler2');
+    res.send(`handler2 received: ${req.customData}`);
+}
+
+app.get("/", handler2);
