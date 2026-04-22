@@ -43,11 +43,13 @@ const handlerTwo = (req, res, next) => {
         message: "hello NODE-EXPRESS",
         dataOne: req.dataOne,
         dataTwo: req.dataTwo,
+        query: req.query,
+        params: req.params,
     })
 
 }
 
-app.get('/users/:id', handlerOne);
+app.get('/users/:name/:kuku/:id', handlerOne, handlerTwo);
 
 const server = createServer(app);
 
