@@ -5,15 +5,13 @@ const {PORT} = process.env;
 
 const app = express();
 
-app.get('/', (req, res) => {
-    res.json({
-        message: 'Hello World!',
-    });
-})
+// app.get('/', (req, res) => {
+//     res.json({
+//         message: 'Hello World!',
+//     });
+// })
 
-app.listen(PORT, () => {
-    console.log(`app listning on port ${PORT}`);
-});
+
 const hendler1 = (req, res, next) => {
     console.log('hendler1');
     req.customData = 'This is a custom data from hendleer 1';
@@ -26,3 +24,7 @@ const handler2 = (req, res) => {
 };
 
 app.get("/", handler2, hendler1);
+
+app.listen(PORT, () => {
+    console.log(`app listning on port ${PORT}`);
+});
