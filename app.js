@@ -14,8 +14,8 @@ app.get('/', (req, res) => {
 app.listen(PORT, () => {
     console.log(`app listning on port ${PORT}`);
 });
-const hendleer1 = (req, res, next) => {
-    console.log('hendleer1');
+const hendler1 = (req, res, next) => {
+    console.log('hendler1');
     req.customData = 'This is a custom data from hendleer 1';
     next();
 };
@@ -25,4 +25,4 @@ const handler2 = (req, res) => {
     res.send(`handler2 received: ${req.customData}`);
 };
 
-app.get("/", handler2, hendleer1);
+app.get("/", handler2, hendler1);
