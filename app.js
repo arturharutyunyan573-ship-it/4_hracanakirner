@@ -1,31 +1,24 @@
 import 'dotenv/config';
 import express from 'express';
+import { createServer } from 'http';
 
-const {PORT} = process.env;
-const port = 5000;
+import routes from './routes/index.js';
 
 const app = express();
 
+const { PORT } = process.env;
 
-
-
-const hendler1 = (req, res, next) => {
-    console.log('hendleer1');
-    req.customData = 'This is a custom data from hendleer 1';
-    next();
-}
-
-const handler2 = (req, res) => {
-    console.log('handler2');
-    res.send(`handler2 received: ${req.customData}`);
-}
-
-app.get("/",hendler1, handler2);
-
-app.post('/data', (req, res) => {
-    res.send(`Received data`);
+app.get('/', (req, res) => {
+    res.json({
+        message: 'Welcome to the app',
+    });
 });
+app.use(routes);
+
+const server = createServer(app);
+
 app.listen(PORT, () => {
-    console.log(`app listning on port ${PORT}`);
+    server.listen(PORT, () => {
+        console.log(`App listening on port ${PORT}`);
+    })
 });
-
