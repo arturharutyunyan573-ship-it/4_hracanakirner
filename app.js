@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import express from 'express';
-import { createServer } from 'http';
+
+import {createServer} from 'http';
 
 import routes from './routes/index.js';
 
