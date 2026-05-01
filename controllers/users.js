@@ -1,44 +1,27 @@
-import HttpErrors from "http-errors";
-import * as fs from "node:fs";
+import * as usersModel from "../models/users.js";
 
-export default {
-    async profile(req, res, next) {
-        try {
-            // throw new HttpErrors(422, 'Invalid user id!');
+async function register(req, res, next) {
+    try {
+        const { username, email, password } = req.body;
 
-            res.json({
-                params: req.params,
-                query: req.query,
+        if (!username || !email || !password) {
+            return res.status(400).json({
+                status: "error",
+                message: "All fields required"
             });
-        } catch (e) {
-            next(e);
         }
-    },
 
-    async login(req, res, next) {
-        try {
-            res.json({
-                params: req.params,
-                query: req.query,
-                body: req.body,
-            });
-        } catch (e) {
-            next(e);
-        }
-    },
-}
+        const user = await usersModel.createUser({
+            username,
+            email,
+            password
+        });
 
-
-
-export async function writeJSon(data) {
-    try{
-        await fs.writeFile(authorsFile, JSON.stringify(data, null, 2));
-    }catch (err) {
-        console.error(err);
+        res.status(201).json({
+            status: "ok",
+            user
+        });
+    } catch (err) {
+        next(err);
     }
-}
-
-export async function findById(id) {
-    const users = readJSON();
-    return users.find(user => user.id === id) || users;
 }

@@ -5,7 +5,7 @@ import { createServer } from 'http';
 
 import errorHandler from './middlewares/errorHandler.js';
 import routes from './routes/index.js';
-
+import "./models/index.js";
 const app = express();
 
 const { PORT } = process.env;
