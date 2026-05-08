@@ -2,20 +2,15 @@ const user = JSON.parse(localStorage.getItem('userDate'));
 
 console.log(user)
 
-const userInfo = document.querySelector('#user_info')
+const userName = document.querySelector('#userName')
 
-if (userInfo) {
-    for (const [key, value] of Object.entries(user)) {
-        const span = document.createElement('span');
-        const br = document.createElement('br');
-
-        span.innerHTML = `
-    <strong style="color: #00B7FF">${key}:</strong>
-    <strong>${value}</strong>
-    `;
-
-        userInfo.append(span);
-        userInfo.append(br);
-    }
+if (userName) {
+    userName.textContent = user.name;
 }
 
+const userAge = document.querySelector('#userAge');
+console.log(userAge)
+if (userAge) {
+    userAge.textContent = userAge.age;
+}
+for (const user of userAge) {}
