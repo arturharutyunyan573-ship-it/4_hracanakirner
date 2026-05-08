@@ -1,14 +1,18 @@
-import { Router } from "express";
-import controller from "../controllers/posts.js";
-import authorize from "../middlewares/authorize.js";
+import { Router } from 'express';
 
 const router = Router();
 
-router.get("/", controller.getAllPosts);
-router.get("/:id", controller.getPost);
+router.get('/', (req, res) => {
+    res.json({
+        message: 'Welcome to the Post!'
+    });
+});
 
-router.post("/", authorize, controller.createPost);
-router.put("/:id", authorize, controller.updatePost);
-router.delete("/:id", authorize, controller.deletePost);
+router.post('/', (req, res) => {
+    res.json({
+        message: 'Welcome to the Post!'
+    });
+});
 
 export default router;
+

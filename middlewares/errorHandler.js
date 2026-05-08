@@ -8,7 +8,8 @@ export default {
     errors(err, req, res, next) {
         res.status(err.status || 500).json({
             message: err.message,
-            stack: err.stack,
+            // stack: err.stack,
+            errors: err.errors ? err.errors : {},
         })
     },
 }

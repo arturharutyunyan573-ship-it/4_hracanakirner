@@ -1,27 +1,97 @@
-import * as usersModel from "../models/users.js";
+import moment from "moment";
+import HttpErrors from "http-errors";
 
-async function register(req, res, next) {
-    try {
-        const { username, email, password } = req.body;
+import Users from "../models/users.js";
 
-        if (!username || !email || !password) {
-            return res.status(400).json({
-                status: "error",
-                message: "All fields required"
+export default {
+    async login(req, res, next) {
+        try {
+            const { email, password } = req.body;
+
+            const user = await Users.findByEmail(email);
+
+            if (!user || (user.password !== Users.hashPassword(password))) {
+                throw new HttpErrors(401, {
+                    errors: {
+                        email: "Invalid email or password",
+                    }
+                });
+            }
+
+            const token = Users.encrypt({
+                userId: user.id,
+                expiresIn: moment().add(2, 'hour').toISOString(),
             });
+
+            delete user.password;
+
+            res.json({
+                token,
+                user,
+            });
+        } catch (e) {
+            next(e);
         }
+    },
 
-        const user = await usersModel.createUser({
-            username,
-            email,
-            password
-        });
+    async register(req, res, next) {
+        try {
+            const { name, email, password, age } = req.body;
 
-        res.status(201).json({
-            status: "ok",
-            user
-        });
-    } catch (err) {
-        next(err);
+            if (await Users.checkEmailUnique(email)) {
+                throw new HttpErrors(422, {
+                    errors: {
+                        email: 'Email is already in use!',
+                    },
+                });
+            }
+
+            const user = await Users.create({
+                name,
+                email,
+                password: Users.hashPassword(password),
+                age
+            });
+
+            delete user.password;
+
+            res.json({
+                message: 'User registered successfully',
+                user,
+            });
+        } catch (e) {
+            next(e);
+        }
+    },
+
+    async profile(req, res, next) {
+        try {
+            const user = await Users.findById(
+                req.userId,
+            );
+            delete user.password;
+            res.json({
+                user,
+            });
+        } catch (e) {
+            next(e);
+        }
+    },
+
+    async update(req, res, next) {
+        try {
+            const { name, age } = req.body;
+
+            const user = await Users.update(
+                req.userId,
+                { name, age },
+            )
+
+            res.json({
+                user,
+            })
+        } catch (e) {
+            next(e);
+        }
     }
 }

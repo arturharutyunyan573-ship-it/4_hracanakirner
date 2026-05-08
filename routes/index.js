@@ -5,6 +5,10 @@ import postsRouter from './posts.js';
 
 const router = Router();
 
+router.get('/', function (req, res, next) {
+    res.render('home');
+});
+
 router.use('/users', usersRouter);
 router.use('/posts', postsRouter);
 

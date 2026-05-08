@@ -1,19 +1,24 @@
 import 'dotenv/config';
+import path from "path";
 import morgan from 'morgan';
 import express from 'express';
 import { createServer } from 'http';
 
-import errorHandler from './middlewares/errorHandler.js';
 import routes from './routes/index.js';
-import "./models/index.js";
+import errorHandler from './middlewares/errorHandler.js';
+
 const app = express();
 
 const { PORT } = process.env;
 
+app.set('views', path.resolve('views'));
+app.set('view engine', 'ejs');
+
 // middlewares
 app.use(morgan('dev'));
-app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+app.use(express.static(path.resolve('public')));
 
 // routes
 app.use(routes);

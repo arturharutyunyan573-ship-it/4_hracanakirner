@@ -1,61 +1,115 @@
-import fs from "fs/promises";
-import path from "path";
-import { randomUUID } from "crypto";
+import fs from 'fs/promises';
+import md5 from 'md5';
+import path from 'path';
+import { v4 as uuidV4 } from 'uuid';
+import CryptoJS from 'crypto-js';
 
-const dataDir = path.resolve("data");
-const filePath = path.join(dataDir, "users.json");
+const {
+    PASSWORD_SECRET,
+    TOKEN_SECRET,
+} = process.env;
 
-export async function initializeDataFile() {
-    await fs.mkdir(dataDir, { recursive: true });
+export function getDataPath(dirPath) {
+    return path.resolve(process.cwd(), 'data', dirPath);
+}
 
+const authorsFile = getDataPath('users.json');
+
+export async function readJSON() {
     try {
-        await fs.access(filePath);
+        const data = await fs.readFile(authorsFile, 'utf8');
+        return JSON.parse(data);
     } catch {
-        await fs.writeFile(filePath, JSON.stringify([]));
+        return [];
     }
 }
 
-async function readJSON() {
-    const data = await fs.readFile(filePath, "utf-8");
-    return JSON.parse(data);
-}
-
-async function writeJSON(data) {
-    await fs.writeFile(filePath, JSON.stringify(data, null, 2));
-}
-
-export async function getAllUsers() {
-    return await readJSON();
-}
-
-export async function getUserById(id) {
-    const users = await readJSON();
-    return users.find(u => u.id === id);
-}
-
-export async function findUserByEmail(email) {
-    const users = await readJSON();
-    return users.find(u => u.email === email);
-}
-
-export async function createUser({ username, email, password }) {
-    const users = await readJSON();
-
-    const exists = users.find(u => u.email === email);
-    if (exists) {
-        throw new Error("User already exists");
+export async function writeJSON(data) {
+    try {
+        console.log(authorsFile)
+        await fs.writeFile(authorsFile, JSON.stringify(data, null, 2));
+    } catch (error) {
+        console.error(error);
     }
+}
+
+export async function findById(id) {
+    const users = await readJSON();
+
+    return users.find(user => user.id === id) || null;
+}
+
+export async function findByEmail(email) {
+    const users = await readJSON();
+
+    return users.find(user => user.email === email) || null;
+}
+
+export async function checkEmailUnique(email) {
+    const users = await readJSON();
+
+    return !!(users.find(user => user.email === email));
+}
+
+export async function create(data) {
+    const users = await readJSON();
 
     const newUser = {
-        id: randomUUID(),
-        username,
-        email,
-        password,
-        createdAt: new Date().toISOString()
-    };
+        ...data,
+        id: uuidV4(),
+    }
 
     users.push(newUser);
+
     await writeJSON(users);
 
     return newUser;
+}
+
+export async function update(id, data) {
+    const users = await readJSON();
+
+    const userIndex = users.findIndex(user => user.id === id);
+
+    if (userIndex > -1) {
+        users[userIndex] = { ...(users[userIndex] || {}), ...data, };
+    } else {
+        return null;
+    }
+
+    await writeJSON(users);
+
+    return users[userIndex];
+}
+
+export function hashPassword(pass) {
+    return md5(md5(pass) + PASSWORD_SECRET);
+}
+
+export function encrypt(data) {
+    return CryptoJS.AES.encrypt(
+        JSON.stringify(data),
+        TOKEN_SECRET,
+    ).toString();
+}
+
+export function decrypt(ciphertext) {
+    try {
+        const bytes = CryptoJS.AES.decrypt(ciphertext, TOKEN_SECRET);
+        return JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+    } catch (e) {
+        console.log(e.message);
+        return null;
+    }
+}
+
+export default {
+    create,
+    update,
+    encrypt,
+    decrypt,
+    findById,
+    findByEmail,
+    hashPassword,
+    checkEmailUnique,
 }
